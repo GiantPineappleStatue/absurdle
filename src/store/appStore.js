@@ -1,16 +1,38 @@
 import { create } from 'zustand'
 
-export const useStore = create((set, get) => ({
-	currentGuess: [{guess:"i"},{guess:"n"},{guess:"a"},{guess:"n"},{guess:"e"}],
+const initialStore = {currentGuess: [],
+	answer:"",
 	guessedLetters: "",
 	guessCount: 0,
-	guesses: Array(6).fill(Array(5).fill({ guess: "", status: null })),
+	gameStarted: false,
+	gameWon:false,
+	guesses: Array(6).fill(Array(5).fill({ guess: "", status: null })),}
+export const useStore = create((set, get) => ({
+	...initialStore,
+	reset: () => {
+		set(initialStore)
+	},
+	startGame: async () => {
+		await get().setAnswer();
+set({
+	    gameStarted: true
+    })
+	},
+	setAnswer: () => {
+		const bank = get().wordBank
+		const randomIndex = Math.floor(Math.random() * bank.length);
+		set({
+			    answer: bank[randomIndex]
+		    })
+		console.log(get().answer)
+
+	},
 	submitLetter: (letter) => {
+		if (letter.length !== 1) return;
 		if (get().currentGuess.length === 5) {
 			alert("You're not suppose to see this")
 			return
 		}
-		if (letter.length !== 1) return;
 
 		set(state => {
 			const row = state.guessCount;
@@ -19,7 +41,6 @@ export const useStore = create((set, get) => ({
 			if (position < 5) {
 				const newGuesses = state.guesses.map((r, rowIndex) => {
 					if (rowIndex !== row) return r;
-
 					return r.map((item, itemIndex) => {
 						if (itemIndex !== position) return item;
 						return { ...item, guess: letter };
@@ -32,7 +53,7 @@ export const useStore = create((set, get) => ({
 				return {
 					currentGuess: newCurrentGuess,
 					guessedLetters: newGuessedLetters,
-					guesses: newGuesses
+					guesses: newGuesses,
 				};
 			}
 		});
@@ -61,14 +82,18 @@ export const useStore = create((set, get) => ({
 
 			return {
 				currentGuess: newCurrentGuess,
-				guesses: newGuesses
+				guesses: newGuesses,
+				guessedLetters: state.guessedLetters.slice(0, -1)
 			};
 		});
-	}
-	,
+	},
 	submitGuess: async () => {
-		const answer = "inane"
+		const answer= get().answer
 		const guessRow = get().currentGuess
+		if (guessRow.length < 5) {
+			alert("Enter something first")
+			return
+		}
 		const updatedRow =  guessRow.map((item, index) => {
 			const guessLetter = item.guess;
 			if (guessLetter === answer[index]) {
@@ -80,37 +105,37 @@ export const useStore = create((set, get) => ({
 			}
 		});
 
-//		console.log(updatedRow)
 		set(state => {
-			let updatedGuesses = state.guesses
+			const updatedGuesses = [...state.guesses]
 			updatedGuesses[state.guessCount] = updatedRow
-			console.log(updatedGuesses)
 			return {
 				guesses: updatedGuesses,
-				guessCount: state.guessCount + 1
+				guessCount: state.guessCount + 1,
+				currentGuess:[],
+				gameWon: state.currentGuess.every(item => item.status !== "close" && item.status !== "wrong")
 			};
 		});
 	},
 	wordBank: [
-		"silly",
-		"loony",
-		"zany",
-		"wacky",
-		"kooky",
-		"goofy",
-		"dizzy",
-		"nutty",
-		"funny",
-		"witty",
-		"wonky",
-		"batty",
-		"dotty",
-		"kinky",
-		"quirk",
-		"twist",
-		"bumpy",
-		"droll",
-		"freak",
-		"jumpy"
+		"SILLY",
+		"LOONY",
+		"ZANY",
+		"WACKY",
+		"KOOKY",
+		"GOOFY",
+		"DIZZY",
+		"NUTTY",
+		"FUNNY",
+		"WITTY",
+		"WONKY",
+		"BATTY",
+		"DOTTY",
+		"KINKY",
+		"QUIRK",
+		"TWIST",
+		"BUMPY",
+		"DROLL",
+		"FREAK",
+		"JUMPY"
 	]
 }))
