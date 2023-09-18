@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 const initialStore = {
-	currentGuess: [],
+	currentGuess: "",
 	answer:"",
 	guessedLetters: "",
 	guessCount: 0,
@@ -89,7 +89,7 @@ set({
 		});
 	},
 	submitGuess: async () => {
-		const answer= get().answer
+		const answer = get().answer
 		const guessRow = get().currentGuess
 //		console.log(guessRow)
 //		return
@@ -97,8 +97,7 @@ set({
 			alert("Enter 5 letters")
 			return
 		}
-		const updatedRow =  guessRow.split("").map((item, index) => {
-			const guessLetter = item;
+		const updatedRow =  guessRow.split("").map((guessLetter, index) => {
 			if (guessLetter === answer[index]) {
 				return { guess:guessLetter, status: "correct" };
 			} else if (answer.includes(guessLetter)) {
@@ -112,14 +111,20 @@ set({
 			const updatedGuesses = [...state.guesses]
 			updatedGuesses[state.guessCount] = updatedRow
 			const uniqueLetter = new Set(state.currentGuess)
+			const wrongGuesses = [...uniqueLetter].filter(letter => !answer.includes(letter))
 			return {
 				guesses: updatedGuesses,
-				guessedLetters: state.guessedLetters + [...uniqueLetter].join(''),
+				guessedLetters: state.guessedLetters + wrongGuesses.join(''),
+				gameWon: state.currentGuess === state.answer,
 				guessCount: state.guessCount + 1,
 				currentGuess: [],
-				gameWon: state.guesses[state.guessCount].every(item => item.status !== "close" && item.status !== "wrong" && item.status === 'correct')
 			};
 		});
+		set(state => {
+			return {
+
+			}
+		})
 	},
 	wordBank: [
 		"SILLY",

@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 
 const GuessBlock = ({block}) => {
-	console.log(block.status === "correct")
+//	console.log(block.status === "correct")
 
 	return (
 		<div className={`${block.status === "correct" ? "bg-green-300 " : ""}

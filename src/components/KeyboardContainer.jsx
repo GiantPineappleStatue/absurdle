@@ -9,7 +9,7 @@ const KeyboardContainer = () => {
 	const reset = useStore((state) => state?.reset)
 	const guessCount = useStore((state) => state?.guessCount)
 
-	if(guessCount > 6) {
+	if(guessCount > 5) {
 		return (<>
 			<div className="m-auto">You Lost</div>
 		<button className="mx-auto mb-auto border rounded p-1 hover:bg-gray-400" onClick={reset}>Restart Game</button>
@@ -36,6 +36,7 @@ const KeyboardContainer = () => {
 	return (
 		<div>
 			<Keyboard submitLetter={submitLetter} />
+			<button className="border rounded p-1 bg-red-800">Reset</button>
 		</div>
 	);
 };
