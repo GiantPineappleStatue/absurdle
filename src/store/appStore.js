@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 
-const initialStore = {currentGuess: [],
+const initialStore = {
+	currentGuess: [],
 	answer:"",
 	guessedLetters: "",
 	guessCount: 0,
@@ -50,9 +51,9 @@ set({
 				const newCurrentGuess = state.currentGuess + letter;
 				const newGuessedLetters = state.guessedLetters + letter;
 
+			console.log(get().currentGuess)
 				return {
 					currentGuess: newCurrentGuess,
-					guessedLetters: newGuessedLetters,
 					guesses: newGuesses,
 				};
 			}
@@ -80,39 +81,43 @@ set({
 
 			const newCurrentGuess = state.currentGuess.slice(0, -1);
 
+		console.log(get().currentGuess)
 			return {
 				currentGuess: newCurrentGuess,
 				guesses: newGuesses,
-				guessedLetters: state.guessedLetters.slice(0, -1)
 			};
 		});
 	},
 	submitGuess: async () => {
 		const answer= get().answer
 		const guessRow = get().currentGuess
+//		console.log(guessRow)
+//		return
 		if (guessRow.length < 5) {
-			alert("Enter something first")
+			alert("Enter 5 letters")
 			return
 		}
-		const updatedRow =  guessRow.map((item, index) => {
-			const guessLetter = item.guess;
+		const updatedRow =  guessRow.split("").map((item, index) => {
+			const guessLetter = item;
 			if (guessLetter === answer[index]) {
-				return { ...item, status: "correct" };
+				return { guess:guessLetter, status: "correct" };
 			} else if (answer.includes(guessLetter)) {
-				return { ...item, status: "close" };
+				return {  guess:guessLetter, status: "close" };
 			} else {
-				return { ...item, status: "wrong" };
+				return {  guess:guessLetter, status: "wrong" };
 			}
 		});
 
 		set(state => {
 			const updatedGuesses = [...state.guesses]
 			updatedGuesses[state.guessCount] = updatedRow
+			const uniqueLetter = new Set(state.currentGuess)
 			return {
 				guesses: updatedGuesses,
+				guessedLetters: state.guessedLetters + [...uniqueLetter].join(''),
 				guessCount: state.guessCount + 1,
-				currentGuess:[],
-				gameWon: state.currentGuess.every(item => item.status !== "close" && item.status !== "wrong")
+				currentGuess: [],
+				gameWon: state.guesses[state.guessCount].every(item => item.status !== "close" && item.status !== "wrong" && item.status === 'correct')
 			};
 		});
 	},
