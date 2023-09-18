@@ -129,7 +129,6 @@ set({
 	wordBank: [
 		"SILLY",
 		"LOONY",
-		"ZANY",
 		"WACKY",
 		"KOOKY",
 		"GOOFY",

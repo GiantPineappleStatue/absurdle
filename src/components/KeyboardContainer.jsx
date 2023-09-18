@@ -36,7 +36,7 @@ const KeyboardContainer = () => {
 	return (
 		<div>
 			<Keyboard submitLetter={submitLetter} />
-			<button className="border rounded p-1 bg-red-800">Reset</button>
+			<button className="border rounded p-1 bg-red-800" onClick={reset}>Reset</button>
 		</div>
 	);
 };
